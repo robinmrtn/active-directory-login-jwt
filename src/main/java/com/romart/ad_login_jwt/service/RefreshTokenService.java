@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class RefreshTokenService {
 
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository)  {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 

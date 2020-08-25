@@ -46,9 +46,9 @@ public class JwtRequestFilter extends GenericFilterBean {
             chain.doFilter(request, response);
             return;
         }
-
+        /* remove 'Bearer ' from token header string */
         String jwtToken = requestTokenHeader.substring(7);
-        System.out.println(jwtToken);
+
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
             JWTVerifier verifier = JWT.require(algorithm)
@@ -64,7 +64,6 @@ public class JwtRequestFilter extends GenericFilterBean {
         } catch (JWTVerificationException exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
-
         SecurityContextHolder.clearContext();
     }
 
@@ -81,8 +80,5 @@ public class JwtRequestFilter extends GenericFilterBean {
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         return authenticationToken;
-
     }
-
-
 }

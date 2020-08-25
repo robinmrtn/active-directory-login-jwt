@@ -38,7 +38,7 @@ public class AuthenticationService {
             return ResponseEntity.ok(new AuthenticationResponse(token));
         } catch (JWTCreationException exc) {
             exc.printStackTrace();
-            return  ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
 
 

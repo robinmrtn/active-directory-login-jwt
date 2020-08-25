@@ -1,9 +1,9 @@
 package com.romart.ad_login_jwt.service;
 
 
+import com.romart.ad_login_jwt.domain.ismnet.EventPlanSubscription;
 import com.romart.ad_login_jwt.domain.local.RefreshToken;
 import com.romart.ad_login_jwt.domain.local.User;
-import com.romart.ad_login_jwt.domain.ismnet.EventPlanSubscription;
 import com.romart.ad_login_jwt.repository.ismnet.EventPlanSubscriptionRepository;
 import com.romart.ad_login_jwt.repository.local.RefreshTokenRepository;
 import com.romart.ad_login_jwt.repository.local.UserRepository;
@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private RefreshTokenService refreshTokenService;
-    private RefreshTokenRepository refreshTokenRepository;
-    private EventPlanSubscriptionRepository eventPlanSubscriptionRepository;
+    private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final EventPlanSubscriptionRepository eventPlanSubscriptionRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, RefreshTokenService refreshTokenService,
@@ -32,7 +32,7 @@ public class UserService {
     public User create(User user) {
 
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(5);
-        String token = refreshTokenService.generateToken(user.getOid(),System.currentTimeMillis());
+        String token = refreshTokenService.generateToken(user.getOid(), System.currentTimeMillis());
         RefreshToken refreshToken = new RefreshToken(token, expiryDate);
 
         user.setRefreshToken(refreshToken);
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public boolean existsByAccountNameAndOid(String accountName, String oid) {
-        return userRepository.existsUserByAccountNameAndOid(accountName,oid);
+        return userRepository.existsUserByAccountNameAndOid(accountName, oid);
     }
 
     public EventPlanSubscription getSubscriptionByPoid(String poid) {

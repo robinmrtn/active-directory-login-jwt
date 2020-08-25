@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtRequestFilter jwtRequestFilter(String path) {
         return new JwtRequestFilter(path);
     }
+
     @Value("${active-directory.domain}")
     private String acitiveDirectoryDomain;
 
@@ -34,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String activeDirectoryUrl;
 
     @Bean
-    public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider(){
+    public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider = new
                 ActiveDirectoryLdapAuthenticationProvider(acitiveDirectoryDomain, activeDirectoryUrl);
         activeDirectoryLdapAuthenticationProvider.setConvertSubErrorCodesToExceptions(true);
@@ -73,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth").permitAll()
                 .anyRequest().authenticated()
-            //    .and()
+        //    .and()
         //  .formLogin();
         ;
     }

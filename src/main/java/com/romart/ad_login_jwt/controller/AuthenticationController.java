@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("auth")
 public class AuthenticationController {
 
-    private AuthenticationManager authenticationManager;
-    private AuthenticationService authenticationService;
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, AuthenticationService authenticationService) {

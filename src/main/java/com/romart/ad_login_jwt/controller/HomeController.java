@@ -1,8 +1,8 @@
 package com.romart.ad_login_jwt.controller;
 
+import com.romart.ad_login_jwt.domain.CustomUserDetails;
 import com.romart.ad_login_jwt.domain.ismnet.EventPlanSubscription;
 import com.romart.ad_login_jwt.domain.local.User;
-import com.romart.ad_login_jwt.domain.CustomUserDetails;
 import com.romart.ad_login_jwt.security.IAuthenticationFacade;
 import com.romart.ad_login_jwt.service.RefreshTokenService;
 import com.romart.ad_login_jwt.service.UserService;
@@ -38,7 +38,7 @@ public class HomeController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         if (userService.existsByAccountNameAndOid(userDetails.getAccountName(), userDetails.getOid())) {
-           EventPlanSubscription eventPlanSubscription = userService.getSubscriptionByPoid("XV1##MD7#5#1##");
+            EventPlanSubscription eventPlanSubscription = userService.getSubscriptionByPoid("XV1##MD7#5#1##");
             return "User already exists" + eventPlanSubscription;
         } else {
 
@@ -56,8 +56,7 @@ public class HomeController {
     @GetMapping("/test")
     public String test() {
 
-
-        Principal principal = (Principal) SecurityContextHolder.getContext().getAuthentication();
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
 
         return principal.getName();
     }

@@ -9,10 +9,11 @@ public class EventPlanSubscription {
 
     @Id
     private int id;
-    private  String pOid;
-    private  String dfOid;
+    private String pOid;
+    private String dfOid;
 
-    public EventPlanSubscription() {}
+    public EventPlanSubscription() {
+    }
 
     public EventPlanSubscription(String pOid, String dfOid) {
         this.pOid = pOid;
