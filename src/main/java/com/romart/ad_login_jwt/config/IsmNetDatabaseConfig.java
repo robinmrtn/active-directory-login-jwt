@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 @Configuration
 @PropertySource({"classpath:application.properties"})
-@EnableJpaRepositories(basePackages = "com.romart.ldapdemo.repository.ismnet",
+@EnableJpaRepositories(basePackages = "com.romart.ad_login_jwt.repository.ismnet",
         entityManagerFactoryRef = "ismnetEntityManager", transactionManagerRef = "ismnetTransactionManager")
 public class IsmNetDatabaseConfig {
 
@@ -46,7 +46,7 @@ public class IsmNetDatabaseConfig {
         LocalContainerEntityManagerFactoryBean em
                 = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(ismnetDataSource());
-        em.setPackagesToScan("com.romart.ldapdemo.domain.ismnet");
+        em.setPackagesToScan("com.romart.ad_login_jwt.domain.ismnet");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

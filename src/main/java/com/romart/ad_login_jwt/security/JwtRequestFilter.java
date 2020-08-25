@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,9 @@ public class JwtRequestFilter extends GenericFilterBean {
 
     private final RequestMatcher requestMatcher;
 
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
     public JwtRequestFilter(String path) {
         this.requestMatcher = new AntPathRequestMatcher(path);
     }
@@ -46,7 +50,7 @@ public class JwtRequestFilter extends GenericFilterBean {
         String jwtToken = requestTokenHeader.substring(7);
         System.out.println(jwtToken);
         try {
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer("ism")
                     .build(); //Reusable verifier instance

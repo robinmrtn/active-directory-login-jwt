@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 @Configuration
 @PropertySource({"classpath:application.properties"})
-@EnableJpaRepositories(basePackages = "com.romart.ldapdemo.Repository.local",
+@EnableJpaRepositories(basePackages = "com.romart.ad_login_jwt.Repository.local",
         entityManagerFactoryRef = "localEntityManager", transactionManagerRef = "localTransactionManager")
 public class LocalDatabaseConfig {
 
@@ -46,7 +46,7 @@ public class LocalDatabaseConfig {
     public LocalContainerEntityManagerFactoryBean localEntityManager() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(localDataSource());
-        em.setPackagesToScan("com.romart.ldapdemo.Domain.local");
+        em.setPackagesToScan("com.romart.ad_login_jwt.Domain.local");
 
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
