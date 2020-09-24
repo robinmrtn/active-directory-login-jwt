@@ -1,11 +1,6 @@
-package com.romart.ad_login_jwt.security;
+package com.romart.ad_login_jwt.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,54 +20,55 @@ import java.io.IOException;
 
 public class JwtRequestFilter extends GenericFilterBean {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
     private final RequestMatcher requestMatcher;
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final JwtUtil jwtUtil;
 
-    public JwtRequestFilter(String path) {
+    public JwtRequestFilter(String path, JwtUtil jwtUtil) {
         this.requestMatcher = new AntPathRequestMatcher(path);
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException, JWTVerificationException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        final String requestTokenHeader = request.getHeader("Authorization");
+        final String requestTokenHeader = request.getHeader(AUTHORIZATION_HEADER);
 
         if (!requiresAuthentication(request) || requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ")) {
             chain.doFilter(request, response);
             return;
         }
-        /* remove 'Bearer ' from token header string */
-        String jwtToken = requestTokenHeader.substring(7);
 
+        String jwtToken = resolveToken(requestTokenHeader);
+        System.out.println("token: " + jwtToken);
+        String subject = null;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("ism")
-                    .build(); //Reusable verifier instance
-            DecodedJWT jwt = verifier.verify(jwtToken);
-
-            Authentication auth = buildAuthFromJwt(jwt, request);
-
+            subject = jwtUtil.getSubjectFromToken(jwtToken);
+            Authentication auth = buildAuthFromJwt(subject, request);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             chain.doFilter(request, response);
-        } catch (JWTVerificationException exception) {
+        } catch (JwtException exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
         SecurityContextHolder.clearContext();
+    }
+
+    /* remove 'Bearer ' from token header string */
+    private String resolveToken(String requestTokenHeader) {
+        return requestTokenHeader.substring(7);
     }
 
     private boolean requiresAuthentication(HttpServletRequest request) {
         return requestMatcher.matches(request);
     }
 
-    private Authentication buildAuthFromJwt(DecodedJWT jwt, HttpServletRequest request) {
-        String subject = jwt.getSubject();
+    private Authentication buildAuthFromJwt(String subject, HttpServletRequest request) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(subject, null, null);

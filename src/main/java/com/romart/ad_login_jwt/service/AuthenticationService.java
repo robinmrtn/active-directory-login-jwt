@@ -1,10 +1,9 @@
 package com.romart.ad_login_jwt.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.romart.ad_login_jwt.domain.AuthenticationResponse;
 import com.romart.ad_login_jwt.domain.CustomUserDetails;
+import com.romart.ad_login_jwt.security.jwt.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,13 @@ public class AuthenticationService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    public AuthenticationService(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
     public Date createExpiryDate() {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -28,19 +34,10 @@ public class AuthenticationService {
 
     public ResponseEntity<?> getResponseEntity(CustomUserDetails userDetails) {
 
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
-            String token = JWT.create()
-                    .withIssuer("ism")
-                    .withSubject(userDetails.getOid())
-                    //.withExpiresAt(createExpiryDate())
-                    .sign(algorithm);
-            return ResponseEntity.ok(new AuthenticationResponse(token));
-        } catch (JWTCreationException exc) {
-            exc.printStackTrace();
+        if (userDetails.getOid() == null) {
             return ResponseEntity.badRequest().build();
         }
-
-
+        String token = jwtUtil.generateToken(userDetails.getOid());
+        return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }

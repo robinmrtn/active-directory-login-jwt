@@ -27,7 +27,6 @@ public class HomeController {
     @Autowired
     private IAuthenticationFacade authenticationFacade;
 
-
     @RequestMapping("/")
     public String index() {
 

@@ -1,9 +1,11 @@
 package com.romart.ad_login_jwt.config;
 
 import com.romart.ad_login_jwt.security.CustomUserMapper;
-import com.romart.ad_login_jwt.security.JwtRequestFilter;
 import com.romart.ad_login_jwt.security.RestAccessDeniedHandler;
 import com.romart.ad_login_jwt.security.SecurityAuthenticationEntryPoint;
+import com.romart.ad_login_jwt.security.jwt.JwtRequestFilter;
+import com.romart.ad_login_jwt.security.jwt.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +25,11 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private JwtRequestFilter jwtRequestFilter(String path) {
-        return new JwtRequestFilter(path);
+        return new JwtRequestFilter(path, jwtUtil);
     }
 
     @Value("${active-directory.domain}")
@@ -62,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
 
-                .addFilterAfter(new JwtRequestFilter("/**"), ExceptionTranslationFilter.class)
+                .addFilterAfter(new JwtRequestFilter("/**",jwtUtil), ExceptionTranslationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new SecurityAuthenticationEntryPoint())
                 .accessDeniedHandler(new RestAccessDeniedHandler())
